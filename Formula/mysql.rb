@@ -35,6 +35,9 @@ class Mysql < Formula
   on_linux do
     depends_on "patchelf" => :build
     depends_on "gcc" # for C++17
+
+    # Disable ABI checking
+    patch :DATA
   end
 
   conflicts_with "mariadb", "percona-server",
@@ -80,10 +83,6 @@ class Mysql < Formula
       -DENABLED_LOCAL_INFILE=1
       -DWITH_INNODB_MEMCACHED=ON
     ]
-
-    on_linux do
-      args << "-DFORCE_UNSUPPORTED_COMPILER=1"
-    end
 
     system "cmake", ".", *std_cmake_args, *args
     system "make"
@@ -202,3 +201,18 @@ class Mysql < Formula
     system "#{bin}/mysqladmin", "--port=#{port}", "--user=root", "--password=", "shutdown"
   end
 end
+
+__END__
+diff --git a/cmake/abi_check.cmake b/cmake/abi_check.cmake
+index 0e1886bb..87b7aff7 100644
+--- a/cmake/abi_check.cmake
++++ b/cmake/abi_check.cmake
+@@ -30,7 +30,7 @@
+ # (Solaris) sed or diff might act differently from GNU, so we run only 
+ # on systems we can trust.
+ IF(LINUX)
+-  SET(RUN_ABI_CHECK 1)
++  SET(RUN_ABI_CHECK 0)
+ ELSE()
+   SET(RUN_ABI_CHECK 0)
+ ENDIF()
