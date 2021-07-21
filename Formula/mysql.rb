@@ -36,6 +36,8 @@ class Mysql < Formula
     depends_on "patchelf" => :build
     depends_on "gcc" # for C++17
 
+    ignore_missing_libraries "metadata_cache.so"
+
     # Disable ABI checking
     patch :DATA
   end
