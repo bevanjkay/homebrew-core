@@ -30,6 +30,12 @@ class Node < Formula
 
   uses_from_macos "zlib"
 
+  on_linux do
+    depends_on "gcc" => :build
+  end
+
+  fails_with gcc: "5"
+
   # We track major/minor from upstream Node releases.
   # We will accept *important* npm patch releases when necessary.
   resource "npm" do
