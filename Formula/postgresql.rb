@@ -73,12 +73,6 @@ class Postgresql < Formula
     # which does not work on CLT-only installs.
     args << "PG_SYSROOT=#{MacOS.sdk_path}" if MacOS.sdk_root_needed?
 
-    on_linux do
-      # rebuild `configure` after patching
-      # (remove if patch block not needed)
-      system "autoreconf", "-ivf"
-    end
-
     system "./configure", *args
     system "make"
     system "make", "install-world", "datadir=#{pkgshare}",
