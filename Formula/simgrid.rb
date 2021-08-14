@@ -5,6 +5,7 @@ class Simgrid < Formula
   homepage "https://simgrid.org/"
   url "https://framagit.org/simgrid/simgrid/uploads/5d171dff8b988c639fe52baa24952a2c/simgrid-3.28.tar.gz"
   sha256 "558276e7f8135ce520d98e1bafa029c6c0f5c2d0e221a3a5e42c378fe0c5ef2c"
+  revision 1
 
   livecheck do
     url :homepage
