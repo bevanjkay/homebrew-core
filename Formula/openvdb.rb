@@ -7,6 +7,7 @@ class Openvdb < Formula
   url "https://github.com/AcademySoftwareFoundation/openvdb/archive/v8.1.0.tar.gz"
   sha256 "3e09d47331429be7409a3a3c27fdd3c297f96d31d2153febe194e664a99d6183"
   license "MPL-2.0"
+  revision 1
   head "https://github.com/AcademySoftwareFoundation/openvdb.git", branch: "master"
 
   bottle do
