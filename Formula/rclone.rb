@@ -16,12 +16,16 @@ class Rclone < Formula
 
   depends_on "go" => :build
 
+  # Fix build on go 1.17, remove with next release
+  patch do
+    url "https://github.com/rclone/rclone/commit/8bd26c663ab19eaded9769a73dcb956f653276f6.patch?full_index=1"
+    sha256 "59e2af681c8ce6c7b6cb4b673447ff49e5b244411b23fb15f5fbfc0cb6b2fe8d"
+  end
+
   def install
-    args = *std_go_args
+    args = *std_go_args(ldflags: "-s -w -X github.com/rclone/rclone/fs.Version=v#{version}")
     args += ["-tags", "brew"] if OS.mac?
-    system "go", "build",
-      "-ldflags", "-s -X github.com/rclone/rclone/fs.Version=v#{version}",
-      *args
+    system "go", "build", *args
     man1.install "rclone.1"
     system bin/"rclone", "genautocomplete", "bash", "rclone.bash"
     system bin/"rclone", "genautocomplete", "zsh", "_rclone"
@@ -37,7 +41,7 @@ class Rclone < Formula
 
   test do
     (testpath/"file1.txt").write "Test!"
-    system "#{bin}/rclone", "copy", testpath/"file1.txt", testpath/"dist"
+    system bin/"rclone", "copy", testpath/"file1.txt", testpath/"dist"
     assert_match File.read(testpath/"file1.txt"), File.read(testpath/"dist/file1.txt")
   end
 end
