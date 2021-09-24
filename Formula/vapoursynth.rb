@@ -1,8 +1,8 @@
 class Vapoursynth < Formula
   desc "Video processing framework with simplicity in mind"
   homepage "http://www.vapoursynth.com"
-  url "https://github.com/vapoursynth/vapoursynth/archive/R54.tar.gz"
-  sha256 "ad0c446adcb3877c253dc8c1372a053ad35022bcf42600889b927d2797c5330b"
+  url "https://github.com/vapoursynth/vapoursynth/archive/R55.tar.gz"
+  sha256 "dec26c71db656f0cc449019bc849abb2f6e8e67f014be00a1894ddbc3dce2201"
   license "LGPL-2.1-or-later"
   head "https://github.com/vapoursynth/vapoursynth.git", branch: "master"
 
@@ -39,9 +39,6 @@ class Vapoursynth < Formula
                           "--with-python_prefix=#{prefix}",
                           "--with-python_exec_prefix=#{prefix}"
     system "make", "install"
-    %w[eedi3 miscfilters morpho removegrain vinverse vivtc].each do |filter|
-      rm prefix/"vapoursynth/lib#{filter}.la"
-    end
   end
 
   def post_install
