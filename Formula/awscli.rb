@@ -41,7 +41,7 @@ class Awscli < Formula
 
   uses_from_macos "groff"
 
-  # Python resources should be updated based on setup.py. One possible way is:
+  # Python resources should be updated based on setup.cfg. One possible way is:
   # 1. Download source tarball
   # 2. Remove `botocore` from setup.cfg
   # 3. At top of source directory, run `pipgrip . --sort`
