@@ -127,11 +127,18 @@ class Awscli < Formula
       ENV.prepend "CFLAGS", "-I./build/deps/install/include"
       ENV.prepend "LDFLAGS", "-L./build/deps/install/lib"
     end
+
+    # venv.pip_install_and_link cannot be used due to requiring the `--no-build-isolation` flag
+    # See upstream build instructions: https://github.com/aws/aws-cli/blob/2.2.44/requirements-runtime.txt
+    # This should be able to be reversed in future: https://github.com/Homebrew/homebrew-core/pull/86527#issuecomment-936763994
     venv = virtualenv_create(libexec, "python3")
     venv.pip_install resources
 
-    system libexec/"bin/pip", "install", "-v", "--no-deps", "--no-binary", ":all:", "--ignore-installed",
-"--no-build-isolation", buildpath
+    system libexec/"bin/pip", "install", "-v", "--no-deps",
+                              "--no-binary", ":all:",
+                              "--ignore-installed",
+                              "--no-build-isolation",
+                              buildpath
 
     bin.install_symlink Dir[libexec/"bin/aws*"]
 
