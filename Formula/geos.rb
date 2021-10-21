@@ -1,9 +1,9 @@
 class Geos < Formula
   desc "Geometry Engine"
   homepage "https://trac.osgeo.org/geos"
-  url "https://download.osgeo.org/geos/geos-3.9.1.tar.bz2"
-  sha256 "7e630507dcac9dc07565d249a26f06a15c9f5b0c52dd29129a0e3d381d7e382a"
-  license "LGPL-2.1"
+  url "https://download.osgeo.org/geos/geos-3.10.0.tar.bz2"
+  sha256 "097d70e3c8f688e59633ceb8d38ad5c9b0d7ead5729adeb925dbc489437abe13"
+  license "LGPL-2.1-or-later"
 
   livecheck do
     url "https://download.osgeo.org/geos/"
@@ -18,20 +18,12 @@ class Geos < Formula
     sha256 cellar: :any_skip_relocation, x86_64_linux:  "88c1238afa2af41abed21be1069ce32fb5732d3b64317cb96087bdf4c23cbf15"
   end
 
-  depends_on "swig" => :build
-  depends_on "python@3.9"
+  depends_on "cmake" => :build
 
   def install
-    args = %W[
-      --disable-dependency-tracking
-      --prefix=#{prefix}
-      --enable-python
-      PYTHON=#{Formula["python@3.9"].opt_bin}/python3
-    ]
-    args << "--disable-inline" if Hardware::CPU.arm?
-
-    system "./configure", *args
-    system "make", "install"
+    system "cmake", "-S", ".", "-B", "build", *std_cmake_args, "-DCMAKE_INSTALL_RPATH=#{rpath}"
+    system "cmake", "--build", "build"
+    system "cmake", "--install", "build"
   end
 
   test do
