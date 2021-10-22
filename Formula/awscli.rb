@@ -6,33 +6,16 @@ class Awscli < Formula
   license "Apache-2.0"
 
   stable do
-    url "https://github.com/aws/aws-cli/archive/2.2.47.tar.gz"
-    sha256 "ec361dffbd79f6c4f9c97bc17b9a8792d35dbfdccc663e25d8b27e6ccf0289cf"
-
-    # Botocore v2 is not available on PyPI and version commits are not tagged. One way to update:
-    # 1. Get `botocore` version at https://github.com/aws/aws-cli/blob/#{version}/setup.cfg
-    # 2. Get commit matching version at https://github.com/boto/botocore/commits/v2
-    resource "botocore" do
-      url "https://github.com/boto/botocore/archive/7083e5c204e139dc41f646e0ad85286b5e7c0c23.tar.gz"
-      sha256 "5810653b025bc5041914c2abf1e7e7ae0f15cdc83fc21d7ac3b0ee1b5814fd4f"
-      version "2.0.0dev155"
-    end
+    url "https://github.com/aws/aws-cli/archive/2.3.0.tar.gz"
+    sha256 "1f73a22a38f9b5dbe9e70047210840be1c0999bd1165f1d98a3ba9e10bfcbc7d"
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_big_sur: "a609b8f06ddf5fbaae52f611ea118d41691e1ef8d432ec518cef140e908c328d"
-    sha256 cellar: :any,                 big_sur:       "5488bdf6e6404fa94af4beda53efefc9e4527c72f1378cc10ea46e4032595850"
-    sha256 cellar: :any,                 catalina:      "a5114b36d50aa13db1c61f56828dbdd34104882e5626d8d77ae6976bc6f35ae4"
-    sha256 cellar: :any,                 mojave:        "62131171912023710b1f9e615d19ee7f0f2472744c3110eda1f45a08f04b3cce"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "b241a42810765085a7d4a205ae35a58015a42a0a202138b41505ce507e30abef"
+    sha256 cellar: :any, big_sur: "560e0f4ceb100d1a1c2ff95a6aeb4425162f063192651c293524518b4c239770"
   end
 
   head do
     url "https://github.com/aws/aws-cli.git", branch: "v2"
-
-    resource "botocore" do
-      url "https://github.com/boto/botocore.git", branch: "v2"
-    end
   end
 
   depends_on "cmake" => :build
@@ -48,13 +31,8 @@ class Awscli < Formula
   # 4. Ignore old `botocore` v1 and `six`. Update all other PyPI packages
 
   resource "awscrt" do
-    url "https://files.pythonhosted.org/packages/9f/e2/5a0b096fb73f2b33ad2cc7392d33d365d3b78b295b21dda5792dd481b38f/awscrt-0.11.24.tar.gz"
-    sha256 "b8aa68bca404bf0085be0570eff5b542d01f7e8e3c0f9b0859abfe5e070162ff"
-  end
-
-  resource "cffi" do
-    url "https://files.pythonhosted.org/packages/2e/92/87bb61538d7e60da8a7ec247dc048f7671afe17016cd0008b3b710012804/cffi-1.14.6.tar.gz"
-    sha256 "c9a875ce9d7fe32887784274dd533c57909b7b1dcadcc128a2ac21331a9765dd"
+    url "https://files.pythonhosted.org/packages/e3/62/aaf36ad07eb01e36d6a0b5bfe2782ab1b2577e59421b351063e5b2c0a77f/awscrt-0.12.4.tar.gz"
+    sha256 "6ad69336bc5277f501bd7e33f82e11db2665370c7d279496ee39fe2f369baeb2"
   end
 
   resource "colorama" do
@@ -87,9 +65,9 @@ class Awscli < Formula
     sha256 "f15af68f66e664eaa559d4ac8a928111eebd5feda0c11738b5998045224829db"
   end
 
-  resource "pycparser" do
-    url "https://files.pythonhosted.org/packages/0f/86/e19659527668d70be91d0369aeaa055b4eb396b0f387a4f92293a20035bd/pycparser-2.20.tar.gz"
-    sha256 "2d475327684562c3a96cc71adf7dc8c4f0565175cf86b6d7a404ff4c771f15f0"
+  resource "pyinstaller" do
+    url "https://files.pythonhosted.org/packages/a9/d9/9fdfb0ac2354d059e466d562689dbe53a23c4062019da2057f0eaed635e0/pyinstaller-4.5.1.tar.gz"
+    sha256 "30733baaf8971902286a0ddf77e5499ac5f7bf8e7c39163e83d4f8c696ef265e"
   end
 
   resource "python-dateutil" do
@@ -100,11 +78,6 @@ class Awscli < Formula
   resource "ruamel-yaml" do
     url "https://files.pythonhosted.org/packages/9a/ee/55cd64bbff971c181e2d9e1c13aba9a27fd4cd2bee545dbe90c44427c757/ruamel.yaml-0.15.100.tar.gz"
     sha256 "8e42f3067a59e819935a2926e247170ed93c8f0b2ab64526f888e026854db2e4"
-  end
-
-  resource "s3transfer" do
-    url "https://files.pythonhosted.org/packages/27/90/f467e516a845cf378d85f0a51913c642e31e2570eb64b352c4dc4c6cbfc7/s3transfer-0.4.2.tar.gz"
-    sha256 "cb022f4b16551edebbb31a377d3f09600dbada7363d8c5db7976e7f47732e1b2"
   end
 
   resource "urllib3" do
@@ -128,19 +101,7 @@ class Awscli < Formula
       ENV.prepend "LDFLAGS", "-L./build/deps/install/lib"
     end
 
-    # venv.pip_install_and_link cannot be used due to requiring the `--no-build-isolation` flag
-    # See upstream build instructions: https://github.com/aws/aws-cli/blob/2.2.44/requirements-runtime.txt
-    # This should be able to be reversed in future: https://github.com/Homebrew/homebrew-core/pull/86527#issuecomment-936763994
-    venv = virtualenv_create(libexec, "python3")
-    venv.pip_install resources
-
-    system libexec/"bin/pip", "install", "-v", "--no-deps",
-                              "--no-binary", ":all:",
-                              "--ignore-installed",
-                              "--no-build-isolation",
-                              buildpath
-
-    bin.install_symlink Dir[libexec/"bin/aws*"]
+    virtualenv_install_with_resources
 
     pkgshare.install "awscli/examples"
 
