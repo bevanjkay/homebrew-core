@@ -32,10 +32,11 @@ class KubernetesCli < Formula
     # Don't dirty the git tree
     rm_rf ".brew_home"
 
-    system "git", "add", "--all"
-    system "git", "diff", "--cached", "--exit-code"
-
     # Make binary
+    # Deparallelize to avoid race conditions in creating symlinks, creating an error like:
+    #   ln: failed to create symbolic link: File exists
+    # See https://github.com/kubernetes/kubernetes/issues/106165
+    ENV.deparallelize
     ENV.prepend_path "PATH", Formula["coreutils"].libexec/"gnubin" # needs GNU date
     system "make", "WHAT=cmd/kubectl"
     bin.install "_output/bin/kubectl"
