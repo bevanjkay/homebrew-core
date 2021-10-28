@@ -32,6 +32,9 @@ class KubernetesCli < Formula
     # Don't dirty the git tree
     rm_rf ".brew_home"
 
+    system "git", "add", "--all"
+    system "git", "diff", "--cached", "--exit-code"
+
     # Make binary
     ENV.prepend_path "PATH", Formula["coreutils"].libexec/"gnubin" # needs GNU date
     system "make", "WHAT=cmd/kubectl"
