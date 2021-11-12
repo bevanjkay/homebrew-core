@@ -5,6 +5,7 @@ class Grpc < Formula
       tag:      "v1.41.0",
       revision: "fc662b7964384b701af5bd3ce6994d2180080eb4"
   license "Apache-2.0"
+  revision 1
   head "https://github.com/grpc/grpc.git"
 
   livecheck do
