@@ -25,8 +25,6 @@ class Subfinder < Formula
   end
 
   test do
-    system bin/"subfinder -version"
-    system bin/"subfinder -version"
     assert_match "docs.brew.sh", shell_output("#{bin}/subfinder -d brew.sh")
     assert_predicate testpath/".config/subfinder/config.yaml", :exist?
   end
