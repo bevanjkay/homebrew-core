@@ -15,11 +15,10 @@ class Cask < Formula
 
   def install
     bin.install "bin/cask"
-    prefix.install "templates"
     # Lisp files must stay here: https://github.com/cask/cask/issues/305
     prefix.install Dir["*.el"]
-    elisp.install_symlink "#{prefix}/cask.el"
-    elisp.install_symlink "#{prefix}/cask-bootstrap.el"
+    elisp.install_symlink prefix/"cask.el"
+    elisp.install_symlink prefix/"cask-bootstrap.el"
 
     # Stop cask performing self-upgrades.
     touch prefix/".no-upgrade"
