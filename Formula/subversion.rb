@@ -2,12 +2,11 @@ class Subversion < Formula
   desc "Version control system designed to be a better CVS"
   homepage "https://subversion.apache.org/"
   license "Apache-2.0"
-  revision 4
 
   stable do
-    url "https://www.apache.org/dyn/closer.lua?path=subversion/subversion-1.14.1.tar.bz2"
-    mirror "https://archive.apache.org/dist/subversion/subversion-1.14.1.tar.bz2"
-    sha256 "2c5da93c255d2e5569fa91d92457fdb65396b0666fad4fd59b22e154d986e1a9"
+    url "https://www.apache.org/dyn/closer.lua?path=subversion/subversion-1.14.2.tar.bz2"
+    mirror "https://archive.apache.org/dist/subversion/subversion-1.14.2.tar.bz2"
+    sha256 "c9130e8d0b75728a66f0e7038fc77052e671830d785b5616aad53b4810d3cc28"
 
     # Fix -flat_namespace being used on Big Sur and later.
     patch do
@@ -171,6 +170,9 @@ class Subversion < Formula
       RUBY=#{ruby}
     ]
 
+    # preserve compatibility with macOS 12.0–12.2
+    args.unshift "--enable-sqlite-compatibility-version=3.36.0" if MacOS.version == :monterey
+
     inreplace "Makefile.in",
               "toolsdir = @bindir@/svn-tools",
               "toolsdir = @libexecdir@/svn-tools"
@@ -240,8 +242,9 @@ class Subversion < Formula
   end
 
   test do
-    system "#{bin}/svnadmin", "create", "test"
-    system "#{bin}/svnadmin", "verify", "test"
+    system bin/"svnadmin", "create", "test"
+    system bin/"svnadmin", "verify", "test"
+    system bin/"svn", "checkout", "file://#{testpath}/test", "svn-test"
 
     platform = if OS.mac?
       "darwin-thread-multi-2level"
