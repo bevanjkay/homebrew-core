@@ -33,7 +33,6 @@ class Subversion < Formula
     depends_on "gettext" => :build
   end
 
-  depends_on "openjdk" => :build
   depends_on "pkg-config" => :build
   depends_on "python@3.10" => :build
   depends_on "scons" => :build # For Serf
@@ -56,12 +55,14 @@ class Subversion < Formula
   uses_from_macos "zlib"
 
   on_macos do
+    depends_on "openjdk" => :build unless MacOS.version.outdated_release?
     # Prevent "-arch ppc" from being pulled in from Perl's $Config{ccflags}
     patch :DATA
   end
 
   on_linux do
-    depends_on "libtool"
+    depends_on "libtool" => :build
+    depends_on "openjdk" => :build
   end
 
   resource "py3c" do
@@ -123,28 +124,28 @@ class Subversion < Formula
     end
 
     # Use existing system zlib and sqlite
-    if OS.linux?
-      # svn can't find libserf-1.so.1 at runtime without this
-      ENV.append "LDFLAGS", "-Wl,-rpath=#{serf_prefix}/lib"
-    end
-
-    # Use dep-provided other libraries
-    # Don't mess with Apache modules (since we're not sudo)
     zlib = if OS.mac?
       "#{MacOS.sdk_path_if_needed}/usr"
     else
       Formula["zlib"].opt_prefix
     end
 
-    perl = DevelopmentTools.locate("perl")
-
-    ruby = DevelopmentTools.locate("ruby")
-
     sqlite = if OS.mac?
       "#{MacOS.sdk_path_if_needed}/usr"
     else
       Formula["sqlite"].opt_prefix
     end
+
+    # Use dep-provided other libraries
+    # Don't mess with Apache modules (since we're not sudo)
+    if OS.linux?
+      # svn can't find libserf-1.so.1 at runtime without this
+      ENV.append "LDFLAGS", "-Wl,-rpath=#{serf_prefix}/lib"
+    end
+
+    openjdk = deps.map(&:to_formula).find { |f| f.name.match? "^openjdk" }
+    perl = DevelopmentTools.locate("perl")
+    ruby = DevelopmentTools.locate("ruby")
 
     args = %W[
       --prefix=#{prefix}
@@ -155,7 +156,6 @@ class Subversion < Formula
       --with-apr-util=#{Formula["apr-util"].opt_prefix}
       --with-apr=#{Formula["apr"].opt_prefix}
       --with-apxs=no
-      --with-jdk=#{Formula["openjdk"].opt_prefix}
       --with-ruby-sitedir=#{lib}/ruby
       --with-py3c=#{py3c_prefix}
       --with-serf=#{serf_prefix}
@@ -165,12 +165,15 @@ class Subversion < Formula
       --without-apache-libexecdir
       --without-berkeley-db
       --without-gpg-agent
-      --enable-javahl
       --without-jikes
       PERL=#{perl}
       PYTHON=#{Formula["python@3.10"].opt_bin}/python3
       RUBY=#{ruby}
     ]
+    if openjdk
+      args.unshift "--with-jdk=#{Formula["openjdk"].opt_prefix}",
+                   "--enable-javahl"
+    end
 
     # preserve compatibility with macOS 12.0–12.2
     args.unshift "--enable-sqlite-compatibility-version=3.36.0" if MacOS.version == :monterey
@@ -195,9 +198,11 @@ class Subversion < Formula
 
     # Java and Perl support don't build correctly in parallel:
     # https://github.com/Homebrew/homebrew/issues/20415
-    ENV.deparallelize
-    system "make", "javahl"
-    system "make", "install-javahl"
+    if openjdk
+      ENV.deparallelize
+      system "make", "javahl"
+      system "make", "install-javahl"
+    end
 
     perl_archlib = Utils.safe_popen_read(perl.to_s, "-MConfig", "-e", "print $Config{archlib}")
     perl_core = Pathname.new(perl_archlib)/"CORE"
