@@ -30,13 +30,6 @@ class Cmake < Formula
     depends_on "openssl@1.1"
   end
 
-  # Tentative workaround for bug with gfortran 12 and clang
-  # https://gitlab.kitware.com/cmake/cmake/-/issues/23500
-  patch do
-    url "https://raw.githubusercontent.com/Homebrew/formula-patches/533fd564/cmake/gcc-12.diff"
-    sha256 "f9c7e39c10cf4c88e092da65f2859652529103e364828188e0ae4fef10a18936"
-  end
-
   # The completions were removed because of problems with system bash
 
   # The `with-qt` GUI option was removed due to circular dependencies if
