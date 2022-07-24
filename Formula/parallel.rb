@@ -23,15 +23,6 @@ class Parallel < Formula
     ENV.append_path "PATH", bin
     system "./configure", "--prefix=#{prefix}"
     system "make", "install"
-
-    inreplace_files = [
-      bin/"parallel",
-      doc/"parallel.texi",
-      doc/"parallel_design.texi",
-      man1/"parallel.1",
-      man7/"parallel_design.7",
-    ]
-    inreplace inreplace_files, "/usr/local", HOMEBREW_PREFIX
   end
 
   def caveats
