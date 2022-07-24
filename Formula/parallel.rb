@@ -21,8 +21,19 @@ class Parallel < Formula
 
   def install
     ENV.append_path "PATH", bin
+
     system "./configure", "--prefix=#{prefix}"
     system "make", "install"
+
+    inreplace_files = [
+      bin/"parallel",
+      doc/"parallel_design.texi",
+      man1/"parallel.1",
+      man7/"parallel_design.7",
+    ]
+
+    # Ignore `inreplace` failures when building from HEAD or not building a bottle.
+    inreplace inreplace_files, "/usr/local", HOMEBREW_PREFIX, build.stable? && build.bottle?
   end
 
   def caveats
