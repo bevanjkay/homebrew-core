@@ -1,10 +1,9 @@
 class LastpassCli < Formula
   desc "LastPass command-line interface tool"
   homepage "https://github.com/lastpass/lastpass-cli"
-  url "https://github.com/lastpass/lastpass-cli/releases/download/v1.3.3/lastpass-cli-1.3.3.tar.gz"
-  sha256 "b94f591627e06c9fed3bc38007b1adc6ea77127e17c7175c85d497096768671b"
+  url "https://github.com/lastpass/lastpass-cli/releases/download/v1.3.4/lastpass-cli-1.3.4.tar.gz"
+  sha256 "f747e42dac3441131f9ebf0c119f27c57e8701968de7718224c2cdeb91300b6b"
   license "GPL-2.0"
-  revision 1
   head "https://github.com/lastpass/lastpass-cli.git", branch: "master"
 
   bottle do
@@ -34,6 +33,14 @@ class LastpassCli < Formula
   # Avoid crashes on Mojave's version of libcurl (https://github.com/lastpass/lastpass-cli/issues/427)
   on_mojave :or_newer do
     depends_on "curl"
+  end
+
+  # Newer GCC compatibility patch, https://github.com/lastpass/lastpass-cli/pull/609
+  patch do
+    on_linux do
+      url "https://github.com/lastpass/lastpass-cli/commit/23595c38c4f522c8a33bc75ba93d7fdb27040880.patch?full_index=1"
+      sha256 "d2e5c22319c4533e44658564052ea1f849530e158e34ecc430a08e138959292f"
+    end
   end
 
   def install
