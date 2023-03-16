@@ -43,8 +43,8 @@ class Deno < Formula
   end
 
   resource "v8" do
-    url "https://github.com/denoland/v8/archive/8873f389ceaff538e4a7b857089c096529f0cf25.tar.gz"
-    sha256 "7d00e62556c2ce9667a5f47dddcf31c9176dcefe4c9fb993f4ec87c8016e5307"
+    url "https://github.com/denoland/v8/archive/02aef2fce7750d472d84fa361df3946d447a6489.tar.gz"
+    sha256 "60dbd81e1a676b7d174f0fa8e563b224ec0986e21e2776f608a879fa6f118d9b"
   end
 
   # To find the version of gn used:
